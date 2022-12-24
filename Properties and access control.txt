@@ -1,0 +1,87 @@
+// Write your code below 🏦
+struct SwiftBank{
+  static let depositBonusRate = 0.01
+  var depositcounter = 0
+  private let password : String
+  
+  private var balance : Double = 0 {
+    didSet{
+      if balance < 100{
+        displayLowBalanceMessage() 
+      }
+    }
+  }
+
+  
+  init(initialDeposit: Double, password: String){
+    self.password=password
+    makeDeposit(ofAmount: initialDeposit)
+    self.depositcounter = 0
+  }
+  mutating func makeDeposit (ofAmount depositAmount: Double) {
+    let depositWithBonus = finalDepositWithBonus(fromInitialDeposit: depositAmount)
+    if depositAmount <= 0 {
+      print("Deposit must be above $0")
+      return
+    }
+    print("Making a deposit of $\(depositAmount) with a bonus rate. The final amount deposited is $\(depositWithBonus)\n")
+    if self.depositcounter == 0{
+      if depositAmount > 1000{
+        print("Your fist deposit is above $1000, you got $1000 bonus\n")
+        self.balance += depositWithBonus + 1000
+        self.depositcounter += 1
+        return
+      }
+
+    }
+    self.balance += depositWithBonus
+  }
+  mutating func makeWithdrawal(ofAmount withdrawalAmount: Double, usingPassword password: String){
+      if !isValid(password) {
+          print("Error: Invalid password. Cannot make withdrawal.\n")
+          return
+      }
+      if withdrawalAmount >= self.balance {
+        print("You don't have enough money\n")
+        return
+      }
+      print("Making a $\(withdrawalAmount) withdrawal.\n")
+      self.balance -= withdrawalAmount
+  }
+
+  func displayBalance (usingPassword password: String){
+    if !isValid(password){
+      print("Error: Invalid password. Cannot retrieve balance\n")
+      return
+    }
+    print("Your current balance is $\(balance)\n")
+  }
+
+  private func finalDepositWithBonus(fromInitialDeposit deposit: Double) -> Double{
+    return deposit + (deposit * SwiftBank.depositBonusRate)
+  }
+   
+  private func isValid(_ enteredPassword: String) -> Bool {
+      return password == enteredPassword
+  }
+
+  private func displayLowBalanceMessage(){
+    print("Alert: Your balance is under $100")
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+var myAccount = SwiftBank(initialDeposit: -10, password: "15555")
+myAccount.makeDeposit(ofAmount: 10000)
+myAccount.displayBalance(usingPassword : "15555")
+myAccount.makeWithdrawal(ofAmount: 12000, usingPassword: "15555")
+myAccount.displayBalance(usingPassword : "15555")
